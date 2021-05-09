@@ -8,3 +8,6 @@ script:
 - sampctl package ensure
 - sampctl package build
 - sampctl package run
+install:
+- travis_wait mvn install
+- travis_wait 30 mvn install

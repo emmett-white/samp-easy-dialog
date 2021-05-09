@@ -1,9 +1,13 @@
 #include <a_samp>
+
+#define YSI_NO_HEAP_MALLOC
+#define YSI_NO_OPTIMISATION_MESSAGE
+
 #include "easy-dialog.inc"
 
 main()
 {
-
+    print("main()");
 }
 
 public OnPlayerConnect(playerid)

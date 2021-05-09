@@ -1,0 +1,7 @@
+{
+	"user": "emmett-white",
+	"repo": "samp-easy-dialog",
+	"entry": "test.pwn",
+	"output": "test.amx",
+	"dependencies": ["sampctl/samp-stdlib", "pawn-lang/YSI-Includes"]
+}

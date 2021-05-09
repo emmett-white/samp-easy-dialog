@@ -5,10 +5,6 @@ install:
 - curl https://raw.githubusercontent.com/Southclaws/sampctl/master/install-deb.sh | sh
 - sudo dpkg --add-architecture i386
 - sudo apt update && sudo apt install -y g++-multilib
-- travis_wait pip install scipy
-- travis_wait pip install pysam
-- pip install .
-- python3 -m pip install --upgrade pip
 script:
 - sampctl package ensure
 - sampctl package build

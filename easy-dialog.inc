@@ -11,6 +11,7 @@
 #define _easy_dialog_included
 
 #include <YSI_Coding\y_va>
+#include <YSI_Coding\y_hooks>
 
 #define Dialog:%0(%1) \
 	forward dialog_%0(%1); public dialog_%0(%1)
@@ -58,7 +59,7 @@ stock Dialog_Open(playerid, const function[], style, const caption[], const info
 	return 1;
 }
 
-public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	static s_Public;
 
@@ -77,20 +78,5 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		}
 	}
 
-	#if defined __OnDialogResponse
-		return __OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-	#else
-		return 1;
-	#endif
+	return 1;
 }
-
-#if defined _ALS_OnDialogResponse
-	#undef OnDialogResponse
-#else
-	#define _ALS_OnDialogResponse
-#endif
-
-#define OnDialogResponse __OnDialogResponse
-#if defined __OnDialogResponse
-	forward __OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-#endif

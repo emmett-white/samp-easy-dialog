@@ -2,66 +2,52 @@
 	; Created by Emmet on Friday, January 24, 2014.
 	; Updated by Southclaws 2017-10-13 to add include guard.
 	; Updated by TonY 2020-02-10 to speed up the code execution
-	; Updated by Emmett (dekszy) 2021-04-29 - code cleanup
+	; Updated by Emmett (deksy) 2021-04-29 - code cleanup
+	; Updated by Emmett (deksy) 2022-02-08 - code cleanup; used y_va instead of normal string formatting
 */
 
-#if defined _easy_dialog_included
+#if defined _INC_easy_dialog_inc
 	#endinput
 #endif
-#define _easy_dialog_included
+#define _INC_easy_dialog_inc
 
 #include <YSI_Coding\y_va>
 
-#define Dialog:%0(%1) \
-	forward dialog_%0(%1); public dialog_%0(%1)
+// Macros
+#define Dialog:%0(%1) forward dialog_%0(%1); public dialog_%0(%1)
+#define Dialog_Show(%0,%1, Dialog_Open(%0, #%1,
 
-#define Dialog_Show(%0,%1, \
-	Dialog_Open(%0, #%1,
-
+// Variables
 static s_DialogName[MAX_PLAYERS][32 char];
 
-/**
-  * API
- */
-
+// API
 forward OnDialogPerformed(playerid, const dialog[], response, success);
 
-/**
-  * Functions
- */
-
-stock Dialog_Close(playerid)
+// Functions
+stock Dialog_Close(const playerid)
 {
 	s_DialogName[playerid]{0} = 0;
-
 	return ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, " ", " ", " ", "");
 }
 
-stock Dialog_Open(playerid, const function[], style, const caption[], const info[], const button1[], const button2[] = "", {Float,_}:...)
+stock Dialog_Open(const playerid, const function[], style, const caption[], const info[], const button1[], const button2[] = "", va_args<>)
 {
-	static string[4096];
-
-	if (info[0] == EOS) {
+	if (info[0] == EOS)
 		return 0;
-	}
 
-	if (numargs() < 7) {
-		ShowPlayerDialog(playerid, 32700, style, caption, info, button1, button2);
-		return 1;
-	}
+	if (numargs() < 7)
+		return ShowPlayerDialog(playerid, 32700, style, caption, info, button1, button2);
 	
-	va_format(string, sizeof(string), info, ___(7));
-
-	ShowPlayerDialog(playerid, 32700, style, caption, string, button1, button2);
+	ShowPlayerDialog(playerid, 32700, style, caption, va_return(info, va_start<7>), button1, button2);
 	strpack(s_DialogName[playerid], function, 32 char);
 
 	return 1;
 }
 
+// Callbacks
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	static s_Public;
-
 	s_Public = funcidx("OnDialogPerformed");
 
 	if (dialogid == 32700) {
@@ -72,13 +58,12 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 		Dialog_Close(playerid);
 
-		if ((s_Public == -1) || (CallLocalFunction("OnDialogPerformed", "dsdd", playerid, string[7], response, funcidx(string) != -1))) {
+		if ((s_Public == -1) || (CallLocalFunction("OnDialogPerformed", "dsdd", playerid, string[7], response, funcidx(string)) != -1))
 	 		CallLocalFunction(string, "ddds", playerid, response, listitem, (!inputtext[0]) ? ("\1") : (inputtext));
-		}
 	}
 
-	#if defined __OnDialogResponse
-		return __OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+	#if defined __ED_OnDialogResponse
+		return __ED_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 	#else
 		return 1;
 	#endif
@@ -90,7 +75,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	#define _ALS_OnDialogResponse
 #endif
 
-#define OnDialogResponse __OnDialogResponse
-#if defined __OnDialogResponse
-	forward __OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+#define OnDialogResponse __ED_OnDialogResponse
+#if defined __ED_OnDialogResponse
+	forward __ED_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 #endif

@@ -4,6 +4,7 @@
 	; Updated by TonY 2020-02-10 to speed up the code execution
 	; Updated by Emmett (deksy) 2021-04-29 - code cleanup
 	; Updated by Emmett (deksy) 2022-02-08 - code cleanup; used y_va instead of normal string formatting
+	; Updated by Emmett (deksy) 2022-02-12 - now using y_hooks instead of als and new macro added
 */
 
 #if defined _INC_easy_dialog_inc
@@ -11,9 +12,11 @@
 #endif
 #define _INC_easy_dialog_inc
 
+#include <YSI_Coding\y_hooks>
 #include <YSI_Coding\y_va>
 
 // Macros
+#define dialog_%0\32; dialog_
 #define Dialog:%0(%1) forward dialog_%0(%1); public dialog_%0(%1)
 #define Dialog_Show(%0,%1, Dialog_Open(%0, #%1,
 
@@ -44,13 +47,14 @@ stock Dialog_Open(const playerid, const function[], style, const caption[], cons
 	return 1;
 }
 
-// Callbacks
-public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+// Hooks
+hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 {
 	static s_Public;
 	s_Public = funcidx("OnDialogPerformed");
 
-	if (dialogid == 32700) {
+	if (dialogid == 32700)
+	{
 		new string[40]; // 7 + 32 + \0
 
 		strcat(string, "dialog_");
@@ -62,20 +66,5 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 	 		CallLocalFunction(string, "ddds", playerid, response, listitem, (!inputtext[0]) ? ("\1") : (inputtext));
 	}
 
-	#if defined __ED_OnDialogResponse
-		return __ED_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-	#else
-		return 1;
-	#endif
+	return Y_HOOKS_CONTINUE_RETURN_1;
 }
-
-#if defined _ALS_OnDialogResponse
-	#undef OnDialogResponse
-#else
-	#define _ALS_OnDialogResponse
-#endif
-
-#define OnDialogResponse __ED_OnDialogResponse
-#if defined __ED_OnDialogResponse
-	forward __ED_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
-#endif

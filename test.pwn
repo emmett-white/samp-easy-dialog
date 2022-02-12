@@ -21,3 +21,13 @@ public OnPlayerConnect(playerid)
 
     return 1;
 }
+
+Dialog: DIALOG_CONNECT(const playerid, response, listitem, string: inputtext[])
+{
+    if (!response)
+        return SendClientMessage(playerid, -1, "response == 0 called");
+
+    SendClientMessage(playerid, -1, "response == 1 called");
+
+    return 1;
+}

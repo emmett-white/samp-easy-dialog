@@ -17,7 +17,7 @@
 
 // Macros
 #define dialog_%0\32; dialog_
-#define Dialog:%0(%1) forward dialog_%0(%1); public dialog_%0(%1)
+#define Dialog:%0(%1) dialog_%0(%1); public dialog_%0(%1)
 #define Dialog_Show(%0,%1, Dialog_Open(%0, #%1,
 
 // Variables

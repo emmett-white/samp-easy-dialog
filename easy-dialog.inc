@@ -21,7 +21,7 @@
 #define Dialog_Show(%0,%1, Dialog_Open(%0, #%1,
 
 // Variables
-static s_DialogName[MAX_PLAYERS][32 char];
+static dialog_Name[MAX_PLAYERS][32 char];
 
 // API
 forward OnDialogPerformed(playerid, const dialog[], response, success);
@@ -29,20 +29,24 @@ forward OnDialogPerformed(playerid, const dialog[], response, success);
 // Functions
 stock Dialog_Close(const playerid)
 {
-	s_DialogName[playerid]{0} = 0;
+	dialog_Name[playerid]{0} = 0;
 	return ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, " ", " ", " ", "");
 }
 
 stock Dialog_Open(const playerid, const function[], style, const caption[], const info[], const button1[], const button2[] = "", va_args<>)
 {
+	static fmt_string[4096]; // UwU
+
 	if (info[0] == EOS)
 		return 0;
 
 	if (numargs() < 7)
 		return ShowPlayerDialog(playerid, 32700, style, caption, info, button1, button2);
 	
-	ShowPlayerDialog(playerid, 32700, style, caption, va_return(info, va_start<7>), button1, button2);
-	strpack(s_DialogName[playerid], function, 32 char);
+	va_format(fmt_string, sizeof(fmt_string), info, va_start<7>);
+
+	ShowPlayerDialog(playerid, 32700, style, caption, fmt_string, button1, button2);
+	strpack(dialog_Name[playerid], function, 32 char);
 
 	return 1;
 }
@@ -58,7 +62,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 		new string[40]; // 7 + 32 + \0
 
 		strcat(string, "dialog_");
-		strcat(string, s_DialogName[playerid]);
+		strcat(string, dialog_Name[playerid]);
 
 		Dialog_Close(playerid);
 

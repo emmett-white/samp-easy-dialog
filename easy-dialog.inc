@@ -35,7 +35,8 @@ stock Dialog_Close(const playerid)
 
 stock Dialog_Open(const playerid, const function[], style, const caption[], const info[], const button1[], const button2[] = "", va_args<>)
 {
-	static fmt_string[4096]; // UwU
+	static infolen = strlen(info);
+	static fmt_string[infolen];
 
 	if (info[0] == EOS)
 		return 0;

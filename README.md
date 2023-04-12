@@ -18,7 +18,7 @@ Include in your code and begin using the library:
 
 ## Usage
 
-```c
+```pawn
 #include "easy-dialog.inc"
 
 public OnPlayerConnect(playerid)
